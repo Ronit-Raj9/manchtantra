@@ -1,0 +1,25 @@
+I'll provide links to royalty-free theater images that you can download and use for your website:
+
+1. Hero background image: 
+   https://unsplash.com/photos/silhouette-of-man-sitting-near-light-bulb-yRW96mlQHUs
+
+2. Romeo and Juliet (Theatre Play):
+   https://unsplash.com/photos/a-close-up-of-a-persons-face-with-their-eyes-closed-e5fjQl5zJNQ
+
+3. Theatre Workshop:
+   https://unsplash.com/photos/four-women-sitting-on-floor-near-wall-s0qz8lODdOU
+
+4. Drama Festival:
+   https://unsplash.com/photos/selective-focus-photography-of-people-standing-near-stage-RlR3JZJd-QU
+
+5. Hamlet Performance:
+   https://unsplash.com/photos/man-wearing-black-hat-near-man-wearing-black-suit-jacket-LvmmBMuBE0Y
+
+Download these images, rename them according to the file paths in your EventsPage.tsx component:
+- hero-bg.jpg
+- romeo-juliet.jpg
+- workshop.jpg
+- festival.jpg
+- hamlet.jpg
+
+Then place them in the public/images/events/ directory.

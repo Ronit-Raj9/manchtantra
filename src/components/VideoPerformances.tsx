@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PlayIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
@@ -6,39 +6,79 @@ interface VideoPerformance {
   id: string;
   title: string;
   description: string;
+  thumbnail: string;
   videoId: string;
   date: string;
   category: string;
 }
 
-// Actual videos from your YouTube channel
-const videoPerformances: VideoPerformance[] = [
-  {
-    id: "1",
-    title: "Nukkad Natak - Manchtantra IIITM Gwalior",
-    description: "A powerful street play performance addressing social issues through theatrical expression.",
-    videoId: "VIDEO_ID_1",
-    date: "March 15, 2024",
-    category: "Street Play"
-  },
-  // Add more videos here
-];
-
 const VideoPerformances: React.FC = () => {
+  const [videos, setVideos] = useState<VideoPerformance[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<VideoPerformance | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [featuredVideoId, setFeaturedVideoId] = useState<string | null>(null);
+
+  // Directly use the specific video IDs provided
+  const videoIds = [
+    'XdKY5q7KG2c',
+    'y8Q0MyQKmiM',
+    'AHwMBbddrVM',
+    'hzcLaEVz9ek',
+    'wDr9pKSG8ok',
+    'g7tZUDW7dmA',
+  ];
+
+  // Initialize videos directly with the provided IDs
+  useEffect(() => {
+    console.log("Initializing videos with provided IDs");
+    
+    // Create video objects from the IDs
+    const videosList = videoIds.map((id, index) => ({
+      id: id,
+      title: `Manchtantra Performance ${index + 1}`,
+      description: 'Manchtantra IIITM Gwalior performance',
+      thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+      videoId: id,
+      date: new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      category: "Theatre Performance"
+    }));
+    
+    console.log("Created video list:", videosList);
+    setVideos(videosList);
+    
+    // Set the first video as featured
+    if (videoIds.length > 0) {
+      setFeaturedVideoId(videoIds[0]);
+    }
+    
+    // Simulation of data loading complete
+    setTimeout(() => setIsLoading(false), 500);
+  }, []);
 
   // Handle YouTube iframe load error
   const handleIframeError = () => {
+    console.error("iframe loading error");
     setError("Failed to load video. Please try again later.");
     setIsLoading(false);
   };
 
   // Handle YouTube iframe successful load
   const handleIframeLoad = () => {
+    console.log("iframe loaded successfully");
     setIsLoading(false);
     setError(null);
+  };
+
+  // When setting the selected video
+  const handleSelectVideo = (video: VideoPerformance) => {
+    console.log("Selected video for playback:", video);
+    setSelectedVideo(video);
+    setIsLoading(true); // Reset loading state for the modal
   };
 
   return (
@@ -88,9 +128,10 @@ const VideoPerformances: React.FC = () => {
                 </button>
               </div>
             )}
+            {/* Using the first video as featured */}
             <iframe
-              src="https://www.youtube.com/embed?listType=user&list=manchtantraiiitmgwalior5161"
-              title="Manchtantra YouTube Channel"
+              src={`https://www.youtube.com/embed/${featuredVideoId || videoIds[0]}?rel=0&modestbranding=1`}
+              title="Manchtantra Featured Performance"
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -113,48 +154,71 @@ const VideoPerformances: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Featured Videos Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {videoPerformances.map((video, index) => (
-            <motion.div
-              key={video.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="bg-black/40 backdrop-blur-sm rounded-xl overflow-hidden cursor-pointer group hover:shadow-xl hover:shadow-primary/20 transition-all duration-300"
-              onClick={() => setSelectedVideo(video)}
-            >
-              <div className="relative aspect-video">
-                <img
-                  src={`https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`}
-                  alt={video.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  onError={(e) => {
-                    // Fallback to medium quality thumbnail if maxresdefault fails
-                    (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`;
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/20 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                    <PlayIcon className="w-8 h-8 text-primary" />
+        {/* Videos Section */}
+        <div className="mb-16">
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-3xl font-serif font-bold text-primary mb-8 text-center"
+          >
+            Our Performances
+          </motion.h3>
+
+          {/* Loading State - only show briefly during initial mount */}
+          {isLoading && videos.length === 0 && (
+            <div className="flex justify-center items-center h-64">
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+
+          {/* Videos Grid */}
+          {videos.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {videos.map((video, index) => (
+                <motion.div
+                  key={video.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-black/40 backdrop-blur-sm rounded-xl overflow-hidden cursor-pointer group hover:shadow-xl hover:shadow-primary/20 transition-all duration-300"
+                  onClick={() => handleSelectVideo(video)}
+                >
+                  <div className="relative aspect-video">
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={(e) => {
+                        console.log(`Thumbnail load error for video ${video.videoId}, trying different resolution`);
+                        // Try medium quality if high quality fails
+                        (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`;
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/20 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                        <PlayIcon className="w-8 h-8 text-primary" />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-serif font-bold text-white mb-2 group-hover:text-primary transition-colors">
-                  {video.title}
-                </h3>
-                <p className="text-gray-400 text-sm mb-4">
-                  {video.date} • {video.category}
-                </p>
-                <p className="text-gray-300 line-clamp-2">
-                  {video.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                  <div className="p-6">
+                    <h3 className="text-xl font-serif font-bold text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      Performance {index + 1}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Manchtantra IIITM Gwalior
+                    </p>
+                    <p className="text-gray-300 line-clamp-2">
+                      Click to watch this captivating performance by Manchtantra IIITM Gwalior.
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -181,7 +245,7 @@ const VideoPerformances: React.FC = () => {
                 </div>
               )}
               <iframe
-                src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1`}
+                src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1&rel=0&modestbranding=1`}
                 title={selectedVideo.title}
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
