@@ -1,0 +1,19 @@
+Please add the following media files to the public directory:
+
+1. hero-background.mp4 - A cinematic video for the hero section background
+2. event1.jpg - Annual Theatre Festival image
+3. event2.jpg - Shakespeare Night image
+4. event3.jpg - Modern Drama Workshop image
+5. event4.jpg - Street Theatre image
+6. gallery1.jpg - Romeo & Juliet performance image
+7. gallery2.jpg - Backstage moments image
+8. gallery3.jpg - Street play image
+9. gallery4.jpg - Workshop image
+10. gallery5.jpg - Annual day image
+11. gallery6.jpg - Rehearsal image
+12. favicon.ico - Website favicon
+13. logo192.png - Small app icon
+14. logo512.png - Large app icon
+
+Until you add these files, you might see missing image placeholders or a black background instead of the video.
+You can use any appropriate theatrical/dramatic performance images for these placeholders. 
